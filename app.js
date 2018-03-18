@@ -6,6 +6,9 @@ const Abtest = require('./model/abtest');
 
 const bodyParser = require('body-parser');
 
+const cors = require('cors');
+app.use(cors()); // Use this after the variable declaration
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
@@ -57,7 +60,8 @@ app.post('/api/abtest/create', (req, res) => {
 			url: req.body.url,
 			codeSnippet: req.body.codeSnippet,
 			testName: req.body.testName,
-			testDescription: req.body.testDescription
+			testDescription: req.body.testDescription,
+			testStatus: req.body.testStatus
 		});
 		abtest.save((err, doc) => {
 			if(err) throw err;
@@ -90,6 +94,25 @@ app.post('/api/abtest/updateAbTest', (req, res) => {
 		Abtest.update(
 			{_id: req.body.id },
 			{ codeSnippet : req.body.codeSnippet},
+			{ testStatus: req.body.testStatus },
+			(err, doc) => {
+				if(err) throw err;
+				return res.status(200).json({
+					status: 'success',
+					data: doc
+				});
+			}
+		);
+	});
+});
+
+app.post('/api/abtest/saveAbTest', (req, res) => {
+	mongoose.connect(url, function(err) {
+		console.log('connection established for saveAbTest');
+		Abtest.update(
+			{ testQueryParam: req.body.testQueryParam },
+			{ testCookie: req.body.testCookie },
+			{ testStatus: req.body.testStatus },
 			(err, doc) => {
 				if(err) throw err;
 				return res.status(200).json({
@@ -114,5 +137,12 @@ app.post('/api/abtest/updateAbTest', (req, res) => {
 // 		})
 // 	});
 // });
+
+//Middleware
+app.use(express.static(__dirname + '/public' ));
+
+app.post('/', ( req ,res) => {
+  res.send("Success");
+});
 
 app.listen(3000, () => console.log('AbTestingServer server running on port 3000!'));

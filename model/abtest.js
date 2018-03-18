@@ -6,8 +6,11 @@ const abTestSchema = new Schema({
   url: { type: String, required: true },
   codeSnippet: { type: String },
   testName: { type: String, required: true },
-  testDescription: { type: String, required: true}
-}, {collection: 'abtest'});
+  testDescription: { type: String, required: true },
+  testQueryParam: { type: String },
+  testCookie: { type: String },
+  testStatus: { type: String, required: true }
+}, { collection: 'abtest' });
 
 const Abtest = mongoose.model('Abtest', abTestSchema);
 module.exports = Abtest;
