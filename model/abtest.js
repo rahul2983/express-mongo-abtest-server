@@ -9,7 +9,9 @@ const abTestSchema = new Schema({
   testDescription: { type: String, required: true },
   testQueryParam: { type: String },
   testCookie: { type: String },
-  testStatus: { type: String, required: true }
+  testStatus: { type: String },
+  testTraffic: { type: Number },
+  deviceType: { type: String }
 }, { collection: 'abtest' });
 
 const Abtest = mongoose.model('Abtest', abTestSchema);

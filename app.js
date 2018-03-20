@@ -109,10 +109,28 @@ app.post('/api/abtest/updateAbTest', (req, res) => {
 app.post('/api/abtest/saveAbTest', (req, res) => {
 	mongoose.connect(url, function(err) {
 		console.log('connection established for saveAbTest');
-		Abtest.update(
-			{ testQueryParam: req.body.testQueryParam },
-			{ testCookie: req.body.testCookie },
-			{ testStatus: req.body.testStatus },
+		// Abtest.update(
+		// 	{ testQueryParam: req.body.testQueryParam },
+		// 	{ testCookie: req.body.testCookie },
+		// 	{ testStatus: req.body.testStatus },
+		// 	(err, doc) => {
+		// 		if(err) throw err;
+		// 		return res.status(200).json({
+		// 			status: 'success',
+		// 			data: doc
+		// 		});
+		// 	}
+    // );
+    Abtest.update(
+      { _id: req.body.id },
+      {
+        $set:
+        {
+          testQueryParam: req.body.testQueryParam,
+		      testCookie: req.body.testCookie,
+			    testStatus: req.body.testStatus
+        }
+      },
 			(err, doc) => {
 				if(err) throw err;
 				return res.status(200).json({
@@ -124,24 +142,64 @@ app.post('/api/abtest/saveAbTest', (req, res) => {
 	});
 });
 
-// app.post('/api/post/deletePost', (req, res) => {
-// 	mongoose.connect(url, { useMongoClient: true }, function(err) {
-// 		if (err) throw err;
-// 		Post.findByIdAndRemove(req.body.id,
-// 			(err, doc) => {
-// 			if(err) throw err;
-// 			return res.status(200).json({
-// 				status: 'success',
-// 				data: doc
-// 			})
-// 		})
-// 	});
-// });
+app.post('/api/abtest/saveAudienceInfo', (req, res) => {
+	mongoose.connect(url, function(err) {
+    console.log('connection established for saveAudienceInfo');
+    console.log(req.body.testStatus);
+    console.log(req.body.testTraffic);
+    console.log(req.body.deviceType);
+		// Abtest.update(
+    //   { testStatus: req.body.testStatus },
+    //   { testTraffic: req.body.testTraffic },
+    //   { deviceType: req.body.deviceType },
+		// 	(err, doc) => {
+		// 		if(err) throw err;
+		// 		return res.status(200).json({
+		// 			status: 'success',
+		// 			data: doc
+		// 		});
+		// 	}
+    // );
+    Abtest.update(
+      { _id: req.body.id },
+      { 
+        $set: 
+        { 
+          deviceType: req.body.deviceType,
+          testStatus: req.body.testStatus,
+          testTraffic: req.body.testTraffic
+        }
+      },
+      (err, doc) => {
+      if(err) throw err;
+      return res.status(200).json({
+        status: 'success',
+        data: doc
+      });
+      }
+    );
+	});
+});
+
+app.post('/api/abtest/deleteAbTest', (req, res) => {
+	mongoose.connect(url, function(err) {
+   console.log('connection established for deleteAbTest');
+		if (err) throw err;
+		Abtest.findByIdAndRemove(req.body.id,
+			(err, doc) => {
+			if(err) throw err;
+			return res.status(200).json({
+				status: 'success',
+				data: doc
+			})
+		})
+	});
+});
 
 //Middleware
 app.use(express.static(__dirname + '/public' ));
 
-app.post('/', ( req ,res) => {
+app.post('/', (req, res) => {
   res.send("Success");
 });
 
