@@ -6,51 +6,12 @@ const Abtest = require('./model/abtest');
 
 const bodyParser = require('body-parser');
 
+// used for hosting the test page under dist with main.js
 const cors = require('cors');
 app.use(cors()); // Use this after the variable declaration
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-
-// app.post('/api/user/login', (req, res) => {
-//   mongoose.connect(url, { useMongoClient: true}, function(err) {  
-//     if(err) throw err; 
-//     User.find({
-//       username: req.body.username, password: req.body.password
-//     }, function(err, user) {
-//       if(err) throw err;
-//       if(user.length === 1) {
-//         return res.status(200).json({
-//           status: 'success',
-//           data: user
-//         })
-//       } else {
-//         return res.status(200).json({
-//           status: 'fail',
-//           message: 'Login Failed'
-//         })
-//       }
-//     })
-//   });
-// })
-
-// app.post('/api/user/create', (req, res) => {
-// 	mongoose.connect(url, function(err){
-// 		if(err) throw err;
-// 		const user = new User({
-// 			name: req.body.name,
-// 			username: req.body.username,
-// 			password: req.body.password
-// 		})
-// 		user.save((err, res) => {
-// 			if(err) throw err;
-// 			return res.status(200).json({
-// 				status: 'success',
-// 				data: res
-// 			})
-// 		})
-// 	});
-// })
 
 app.post('/api/abtest/create', (req, res) => {
 	mongoose.connect(url, function(err){
@@ -109,18 +70,6 @@ app.post('/api/abtest/updateAbTest', (req, res) => {
 app.post('/api/abtest/saveAbTest', (req, res) => {
 	mongoose.connect(url, function(err) {
 		console.log('connection established for saveAbTest');
-		// Abtest.update(
-		// 	{ testQueryParam: req.body.testQueryParam },
-		// 	{ testCookie: req.body.testCookie },
-		// 	{ testStatus: req.body.testStatus },
-		// 	(err, doc) => {
-		// 		if(err) throw err;
-		// 		return res.status(200).json({
-		// 			status: 'success',
-		// 			data: doc
-		// 		});
-		// 	}
-    // );
     Abtest.update(
       { _id: req.body.id },
       {
@@ -145,21 +94,6 @@ app.post('/api/abtest/saveAbTest', (req, res) => {
 app.post('/api/abtest/saveAudienceInfo', (req, res) => {
 	mongoose.connect(url, function(err) {
     console.log('connection established for saveAudienceInfo');
-    console.log(req.body.testStatus);
-    console.log(req.body.testTraffic);
-    console.log(req.body.deviceType);
-		// Abtest.update(
-    //   { testStatus: req.body.testStatus },
-    //   { testTraffic: req.body.testTraffic },
-    //   { deviceType: req.body.deviceType },
-		// 	(err, doc) => {
-		// 		if(err) throw err;
-		// 		return res.status(200).json({
-		// 			status: 'success',
-		// 			data: doc
-		// 		});
-		// 	}
-    // );
     Abtest.update(
       { _id: req.body.id },
       { 
@@ -171,30 +105,29 @@ app.post('/api/abtest/saveAudienceInfo', (req, res) => {
         }
       },
       (err, doc) => {
-      if(err) throw err;
-      return res.status(200).json({
-        status: 'success',
-        data: doc
+        if(err) throw err;
+        return res.status(200).json({
+          status: 'success',
+          data: doc
+        });
       });
-      }
-    );
-	});
+  });
 });
 
 app.post('/api/abtest/deleteAbTest', (req, res) => {
-	mongoose.connect(url, function(err) {
-   console.log('connection established for deleteAbTest');
-		if (err) throw err;
-		Abtest.findByIdAndRemove(req.body.id,
-			(err, doc) => {
-			if(err) throw err;
-			return res.status(200).json({
-				status: 'success',
-				data: doc
-			})
-		})
-	});
-});
+  mongoose.connect(url, function(err) {
+    console.log('connection established for deleteAbTest');
+    if (err) throw err;
+    Abtest.findByIdAndRemove(req.body.id,
+      (err, doc) => {
+        if(err) throw err;
+        return res.status(200).json({
+          status: 'success',
+          data: doc
+        });
+      });
+    });
+  });
 
 //Middleware
 app.use(express.static(__dirname + '/public' ));

@@ -12,26 +12,30 @@ xhttp.onreadystatechange = function() {
     console.log(cookieValue);
     if (!cookieValue) {
       res['data'].forEach(element => {
-        if (currentUrl === element.url + '/') {
-          console.log("The URL that matched = " + currentUrl);
+        if (currentUrl === element.url + '/' && element.testStatus === 'active') {
+          // console.log("The URL that matched = " + currentUrl);
           // Add the cookie
           const expires = 5;
-          document.cookie = "testID" + "=" + element._id + ";" + expires + ";path=/";
-          console.log(document.cookie);
-          addCustomCode(element.codeSnippet);
+          document.cookie = "testID=" + element._id + ";" + expires + ";path=/";
+          console.log("Setting cookie for the first time" + document.cookie);
+          // Set the Traffic and add custom code only if it is not control
+          console.log(element.testTraffic);
+          allocateTestTraffic(element.testTraffic, element.codeSnippet);
         }
       });
     }
     else {
       // Check to see first if the testID still exists in DB
-      // if (element.codeSnippet) {
-        res['data'].forEach(element => {
-          if (currentUrl === element.url + '/') {
-            console.log("The URL that matched = " + currentUrl);
-            addCustomCode(element.codeSnippet);
+      res['data'].forEach(element => {
+        if (currentUrl === element.url + '/' && element.testStatus === 'active') {
+          // console.log("The URL that matched = " + currentUrl);
+          // Set the Traffic and add custom code only if it is not control
+          console.log(element.testTraffic);
+          if (element.testStatus === 'active') {
+            allocateTestTraffic(element.testTraffic, element.codeSnippet);
           }
-        });
-      // }
+        }
+      });
     }
     
     // If the queryParam contains testPreviewID
@@ -90,6 +94,22 @@ function getCookie(cname) {
       }
   }
   return "";
+}
+
+allocateTestTraffic = function(trafficPercentage, codeToBeAdded) {
+  // generate a random number and compare with traffic percentage
+  const min = 1;
+  const max = 100;
+  const randomNumber = Math.floor(Math.random() * (max - min + 1)) + min;
+  if (randomNumber <= trafficPercentage) {
+    console.log("Random Number is " + randomNumber);
+    // the random generator is within traffic allocation
+    console.log("In the Test");
+    addCustomCode(codeToBeAdded);  
+  }
+  else {
+    console.log("In the Control");
+  }
 }
 
 // document.querySelector('h1').innerText = 'Inside Aprajitas Version of the Page';
