@@ -1,4 +1,5 @@
 // Add Code to implement workaround for Same Origin Security Policy
+// Refer https://stackoverflow.com/questions/25098021/securityerror-blocked-a-frame-with-origin-from-accessing-a-cross-origin-frame
 
 // Call API and get the existing AB Tests
 const xhttp = new XMLHttpRequest();
