@@ -1,6 +1,6 @@
-// Used to insert script that makes AJAX call to /api/ server
-// console.log("Inside Main JS");
+// Add Code to implement workaround for Same Origin Security Policy
 
+// Call API and get the existing AB Tests
 const xhttp = new XMLHttpRequest();
 const currentUrl = window.location.href;
 xhttp.onreadystatechange = function() {
