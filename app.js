@@ -13,6 +13,8 @@ app.use(cors()); // Use this after the variable declaration
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
+// Future endpoint for login
+
 app.post('/api/abtest/create', (req, res) => {
 	mongoose.connect(url, function(err){
 		if(err) throw err;
@@ -22,7 +24,8 @@ app.post('/api/abtest/create', (req, res) => {
 			codeSnippet: req.body.codeSnippet,
 			testName: req.body.testName,
 			testDescription: req.body.testDescription,
-			testStatus: req.body.testStatus
+			testStatus: req.body.testStatus,
+			testType: req.body.testType
 		});
 		abtest.save((err, doc) => {
 			if(err) throw err;
@@ -54,32 +57,14 @@ app.post('/api/abtest/updateAbTest', (req, res) => {
 		console.log('connection established for updateAbTest');
 		Abtest.update(
 			{_id: req.body.id },
-			{ codeSnippet : req.body.codeSnippet},
-			{ testStatus: req.body.testStatus },
-			(err, doc) => {
-				if(err) throw err;
-				return res.status(200).json({
-					status: 'success',
-					data: doc
-				});
-			}
-		);
-	});
-});
-
-app.post('/api/abtest/saveAbTest', (req, res) => {
-	mongoose.connect(url, function(err) {
-		console.log('connection established for saveAbTest');
-    Abtest.update(
-      { _id: req.body.id },
-      {
-        $set:
-        {
-          testQueryParam: req.body.testQueryParam,
-		      testCookie: req.body.testCookie,
-			    testStatus: req.body.testStatus
-        }
-      },
+			{ 
+				$set:
+				{
+					codeSnippet : req.body.codeSnippet,
+					testStatus: req.body.testStatus,
+					modifiedDom: req.body.modifiedDom 
+				}
+			},
 			(err, doc) => {
 				if(err) throw err;
 				return res.status(200).json({

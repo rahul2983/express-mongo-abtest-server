@@ -8,10 +8,11 @@ const abTestSchema = new Schema({
   testName: { type: String, required: true },
   testDescription: { type: String, required: true },
   testQueryParam: { type: String },
-  testCookie: { type: String },
   testStatus: { type: String },
   testTraffic: { type: Number },
-  deviceType: { type: String }
+  deviceType: { type: String },
+  modifiedDom: { type: String },
+  testType: { type: String }
 }, { collection: 'abtest' });
 
 const Abtest = mongoose.model('Abtest', abTestSchema);

@@ -21,7 +21,13 @@ xhttp.onreadystatechange = function() {
           console.log("Setting cookie for the first time" + document.cookie);
           // Set the Traffic and add custom code only if it is not control
           console.log(element.testTraffic);
-          allocateTestTraffic(element.testTraffic, element.codeSnippet);
+          console.log(element.testType);
+          if (element.testStatus === 'active') {
+            if (element.testType === 'WYSIWYG') {
+              allocateTestTraffic(element.testTraffic, element.modifiedDom, element.testType); 
+            } else if (element.testType === 'Custom Code')
+            allocateTestTraffic(element.testTraffic, element.codeSnippet, element.testType); 
+          }
         }
       });
     }
@@ -32,8 +38,12 @@ xhttp.onreadystatechange = function() {
           // console.log("The URL that matched = " + currentUrl);
           // Set the Traffic and add custom code only if it is not control
           console.log(element.testTraffic);
+          console.log(element.testType);
           if (element.testStatus === 'active') {
-            allocateTestTraffic(element.testTraffic, element.codeSnippet);
+            if (element.testType === 'WYSIWYG') {
+              allocateTestTraffic(element.testTraffic, element.modifiedDom, element.testType); 
+            } else if (element.testType === 'Custom Code')
+            allocateTestTraffic(element.testTraffic, element.codeSnippet, element.testType); 
           }
         }
       });
@@ -54,22 +64,26 @@ xhttp.onreadystatechange = function() {
 xhttp.open("POST", "http://localhost:3000/api/abtest/getAllAbTests", true);
 xhttp.send();
 
-addCustomCode = function(codeToBeAdded) {
+addCustomCode = function(codeToBeAdded, testType) {
   // console.log(codeToBeAdded);
   // console.log(document.body.querySelector("#fromABTesting"));
   // Temporary code to remove existing script tags from AB Testing Client
-  if (document.body.querySelector("#fromABTesting")) {
-    document.body.querySelector("#fromABTesting").remove();
-  }
-
-  if (codeToBeAdded) {
-    const customScript = document.createElement('script');
-    customScript.setAttribute("type", "text/javascript");
-    customScript.setAttribute("id", "fromABTesting");
-    customScript.innerText = codeToBeAdded;
-    document.body.appendChild(customScript);
-  }
+  if (testType === 'Custom Code') {
+    if (document.body.querySelector("#fromABTesting")) {
+      document.body.querySelector("#fromABTesting").remove();
+    }
   
+    if (codeToBeAdded) {
+      const customScript = document.createElement('script');
+      customScript.setAttribute("type", "text/javascript");
+      customScript.setAttribute("id", "fromABTesting");
+      customScript.innerText = codeToBeAdded;
+      document.body.appendChild(customScript);
+    }
+  } else if (testType === 'WYSIWYG') {
+    // document.body.innerHTML = '';
+    document.body.innerHTML = codeToBeAdded;
+  }
 }
 
 showPreview = function(previewCode) {
@@ -97,7 +111,7 @@ function getCookie(cname) {
   return "";
 }
 
-allocateTestTraffic = function(trafficPercentage, codeToBeAdded) {
+allocateTestTraffic = function(trafficPercentage, codeToBeAdded, testType) {
   // generate a random number and compare with traffic percentage
   const min = 1;
   const max = 100;
@@ -106,11 +120,9 @@ allocateTestTraffic = function(trafficPercentage, codeToBeAdded) {
     console.log("Random Number is " + randomNumber);
     // the random generator is within traffic allocation
     console.log("In the Test");
-    addCustomCode(codeToBeAdded);  
+    addCustomCode(codeToBeAdded, testType);  
   }
   else {
     console.log("In the Control");
   }
 }
-
-// document.querySelector('h1').innerText = 'Inside Aprajitas Version of the Page';
